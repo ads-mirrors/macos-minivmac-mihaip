@@ -498,9 +498,9 @@ LOCALPROC HaveChangedScreenBuff(ui4r top, ui4r left,
 			for (int i = 0; i < CLUT_size; ++i) {
 				CLUT_8bitTo32bit[i] =
 					0xFF000000 |
-					(CLUT_blues[i] & 0xFF) << 16 |
-					(CLUT_greens[i] & 0xFF) << 8 |
-					(CLUT_reds[i] & 0xFF) << 0;
+					(CLUT_blues[i] & 0xFF00) << 8 |
+					(CLUT_greens[i] & 0xFF00) |
+					(CLUT_reds[i] & 0xFF00) >> 8;
 			}
 			ColorTransValid = trueblnr;
 		}
@@ -1006,7 +1006,7 @@ LOCALPROC CheckForSavedTasks(void)
 
 /* --- input --- */
 
-LOCALPROC ReadJSInput()
+LOCALPROC ReadJSInput(void)
 {
     int lock = EM_ASM_INT_V({ return workerApi.acquireInputLock(); });
     if (!lock) {
