@@ -11,7 +11,7 @@ gcc -o setup_t setup/tool.c
     -t emsc \
     -api esc \
     -sound 1 \
-    -drives 20 \
+    -drives 10 \
     -sony-tag 1 \
     -sony-sum 1 \
     -sony-dc42 1 \
