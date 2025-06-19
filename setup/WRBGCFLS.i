@@ -400,7 +400,7 @@ LOCALPROC WriteBashGccMakeFile(void)
 				WriteCStrToDestFile(" -lfilesystem -lfat -lnds9");
 			} else if (gbk_apifam_esc == gbo_apifam) {
 				WriteCStrToDestFile(" -gsource-map");
-				WriteCStrToDestFile(" -s INITIAL_MEMORY=33554432"); // 32 MB
+				WriteCStrToDestFile(" -s INITIAL_MEMORY=50331648"); // 48 MB
 				WriteCStrToDestFile(" -s MODULARIZE -s EXPORT_ES6 -s EXPORT_NAME=emulator");
 				WriteCStrToDestFile(" -s 'EXPORTED_RUNTIME_METHODS=[\"FS\"]'");
 				WriteCStrToDestFile(" -s 'EXPORTED_FUNCTIONS=[\"_malloc\", \"_free\", \"_main\"]'");
