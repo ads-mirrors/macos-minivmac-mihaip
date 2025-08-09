@@ -402,7 +402,7 @@ LOCALPROC WriteBashGccMakeFile(void)
 				WriteCStrToDestFile(" -gsource-map");
 				WriteCStrToDestFile(" -s INITIAL_MEMORY=50331648"); // 48 MB
 				WriteCStrToDestFile(" -s MODULARIZE -s EXPORT_ES6 -s EXPORT_NAME=emulator");
-				WriteCStrToDestFile(" -s 'EXPORTED_RUNTIME_METHODS=[\"FS\"]'");
+				WriteCStrToDestFile(" -s 'EXPORTED_RUNTIME_METHODS=[\"FS\",\"HEAPU8\"]'");
 				WriteCStrToDestFile(" -s 'EXPORTED_FUNCTIONS=[\"_malloc\", \"_free\", \"_main\"]'");
 				WriteCStrToDestFile(" -s ENVIRONMENT=worker");
 				WriteCStrToDestFile(" -flto");

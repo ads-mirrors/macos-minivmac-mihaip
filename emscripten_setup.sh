@@ -15,6 +15,7 @@ gcc -o setup_t setup/tool.c
     -sony-tag 1 \
     -sony-sum 1 \
     -sony-dc42 1 \
+    -d d \
     $@ \
     > setup.sh
 
