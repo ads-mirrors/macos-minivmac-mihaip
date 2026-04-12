@@ -747,7 +747,9 @@ LOCALPROC WriteAppCNFUDPICcontents(void)
 			WriteDestFileLn("#define r_pc_pHi \"r13\"");
 		}
 
-		if (gbk_cpufam_ppc == gbo_cpufam) {
+		if ((gbk_cpufam_ppc == gbo_cpufam)
+			|| (gbk_cpufam_p64 == gbo_cpufam))
+		{
 			WriteBlankLineToDestFile();
 			WriteDestFileLn("#define r_regs \"r14\"");
 			WriteDestFileLn("#define r_pc_p \"r15\"");

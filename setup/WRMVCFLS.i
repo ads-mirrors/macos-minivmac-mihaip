@@ -322,6 +322,9 @@ LOCALPROC WriteMVCMakeFile(void)
 		case gbk_targ_lppc:
 			WriteDestFileLn("my_prefix = powerpc-linux-gnu-");
 			break;
+		case gbk_targ_lp64:
+			WriteDestFileLn("my_prefix = powerpc64-linux-gnu-");
+			break;
 		case gbk_targ_lspr:
 			WriteDestFileLn("my_prefix = sparc-linux-gnu-");
 			break;
@@ -518,6 +521,7 @@ LOCALPROC WriteMVCMakeFile(void)
 					case gbk_targ_lx64:
 					case gbk_targ_larm:
 					case gbk_targ_lppc:
+					case gbk_targ_lp64:
 					case gbk_targ_lspr:
 					case gbk_targ_fbsd:
 					case gbk_targ_fb64:
