@@ -355,6 +355,7 @@ enum {
         gbk_targ_wx64, /* Windows on x64 */
         gbk_targ_lx86, /* X11 for linux on x86 */
         gbk_targ_lppc, /* X11 for linux on PowerPC */
+        gbk_targ_lp64, /* X11 for linux on PowerPC64 */
         gbk_targ_lx64, /* X11 for linux on x64 */
         gbk_targ_larm, /* X11 for linux on arm (debian armel) */
         gbk_targ_lspr, /* X11 for linux on SPARC */
@@ -491,6 +492,9 @@ LOCALFUNC char * GetTargetName(int i)
 			break;
 		case gbk_targ_lppc:
 			s = "lppc";
+			break;
+		case gbk_targ_lp64:
+			s = "lp64";
 			break;
 		case gbk_targ_lx64:
 			s = "lx64";
@@ -893,6 +897,7 @@ enum {
 	gbk_cpufam_mip, /* MIPS */
 	gbk_cpufam_gen, /* Generic (don't know) */
 	gbk_cpufam_a64, /* ARM64 */
+	gbk_cpufam_p64, /* PowerPC64 */
 	kNumCPUFamilies
 };
 
@@ -937,6 +942,9 @@ LOCALFUNC char * GetCPUFamName(int i)
 		case gbk_cpufam_a64:
 			s = "a64";
 			break;
+		case gbk_cpufam_p64:
+			s = "p64";
+			break;
 		default:
 			s = "(unknown CPU)";
 			break;
@@ -966,6 +974,9 @@ LOCALFUNC int dfo_cpufam(void)
 		case gbk_targ_lppc:
 		case gbk_targ_fbpc:
 			v = gbk_cpufam_ppc;
+			break;
+		case gbk_targ_lp64:
+			v = gbk_cpufam_p64;
 			break;
 		case gbk_targ_wx86:
 		case gbk_targ_wc86:
@@ -1085,6 +1096,7 @@ LOCALFUNC tMyErr ChooseTargFam(void)
                         break;
 		case gbk_targ_lx86:
 		case gbk_targ_lppc:
+		case gbk_targ_lp64:
 		case gbk_targ_lx64:
 		case gbk_targ_larm:
 		case gbk_targ_lspr:
