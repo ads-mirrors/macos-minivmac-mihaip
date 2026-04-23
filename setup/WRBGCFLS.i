@@ -241,7 +241,7 @@ LOCALPROC WriteBashGccMakeFile(void)
 	WriteBlankLineToDestFile();
 
 	WriteBgnDestFileLn();
-	WriteCStrToDestFile("mk_COptionsCommon = -c");
+	WriteCStrToDestFile("mk_COptionsCommon = ${CFLAGS} -c");
 	WriteBgcCOptions();
 	WriteEndDestFileLn();
 
@@ -335,7 +335,8 @@ LOCALPROC WriteBashGccMakeFile(void)
 		WriteEndDestFileLn();
 		++DestFileIndent;
 			WriteBgnDestFileLn();
-			WriteCStrToDestFile("-o");
+            WriteCStrToDestFile("${LDFLAGS}");
+			WriteCStrToDestFile(" -o");
 			if (gbk_apifam_nds == gbo_apifam) {
 				WritePathArgInMakeCmnd(WriteBinElfObjObjPath);
 			} else {
