@@ -1,7 +1,7 @@
 /*
 	OSGLUSDL.c
 
-	Copyright (C) 2012-2025 Paul C. Pratt, Manuel Alfayate, StevenSYS
+	Copyright (C) 2012-2026 Paul C. Pratt, Manuel Alfayate, StevenSYS
 
 	You can redistribute this file and/or modify it under the terms
 	of version 2 of the GNU General Public License as published by
@@ -62,11 +62,6 @@ GLOBALOSGLUPROC MyMoveBytes(anyp srcPtr, anyp destPtr, si5b byteCount)
 
 #ifndef SDL_MAJOR_VERSION
 #define SDL_MAJOR_VERSION 0
-#endif
-
-#if EnableMagnify && SDL_MAJOR_VERSION >= 3
-	#undef EnableMagnify
-	#define EnableMagnify 0
 #endif
 
 #ifndef CanGetAppPath
@@ -636,12 +631,12 @@ LOCALVAR int vOffset;
 LOCALVAR blnr UseFullScreen = (WantInitFullScreen != 0);
 #endif
 
-#if EnableMagnify
-LOCALVAR blnr UseMagnify = (WantInitMagnify != 0);
+#ifndef UseSDLscaling
+	#define UseSDLscaling 0
 #endif
 
-#ifndef UseSDLscaling
-#define UseSDLscaling 0
+#if EnableMagnify
+LOCALVAR blnr UseMagnify = (WantInitMagnify != 0);
 #endif
 
 LOCALVAR blnr gBackgroundFlag = falseblnr;
@@ -881,7 +876,7 @@ LOCALPROC HaveChangedScreenBuff(ui4r top, ui4r left,
 	}
 #endif
 
-#if EnableMagnify
+#if EnableMagnify && ! UseSDLscaling
 	if (UseMagnify) {
 		XDest *= MyWindowScale;
 		YDest *= MyWindowScale;
@@ -1327,7 +1322,7 @@ LOCALFUNC blnr MyMoveMouse(si4b h, si4b v)
 	}
 #endif
 
-#if EnableMagnify
+#if EnableMagnify && ! UseSDLscaling
 	if (UseMagnify) {
 		h *= MyWindowScale;
 		v *= MyWindowScale;
@@ -1374,7 +1369,7 @@ LOCALPROC MousePositionNotify(int NewMousePosh, int NewMousePosv)
 #endif
 #endif /* SDL_MAJOR_VERSION >= 2 */
 
-#if EnableMagnify
+#if EnableMagnify && !UseSDLscaling
 	if (UseMagnify) {
 		NewMousePosh /= MyWindowScale;
 		NewMousePosv /= MyWindowScale;
@@ -1473,6 +1468,9 @@ LOCALPROC CheckMouseState(void)
 	x, y;
 
 	(void) SDL_GetMouseState(&x, &y);
+	#if SDL_MAJOR_VERSION >= 3 && UseSDLscaling
+	SDL_RenderCoordinatesFromWindow(my_renderer, x, y, &x, &y);
+	#endif
 	MousePositionNotify(x, y);
 #endif /* 0 != SDL_MAJOR_VERSION */
 }
@@ -4120,7 +4118,7 @@ LOCALFUNC blnr CreateMainWindow(void)
 	Uint32 flags = SDL_SWSURFACE;
 	blnr v = falseblnr;
 
-#if EnableMagnify && 1
+#if EnableMagnify
 	if (UseMagnify) {
 		NewWindowHeight *= MyWindowScale;
 		NewWindowWidth *= MyWindowScale;
@@ -4232,7 +4230,7 @@ LOCALFUNC blnr CreateMainWindow(void)
 	int NewWindowHeight = vMacScreenHeight;
 	int NewWindowWidth = vMacScreenWidth;
 	Uint32 flags =
-	#if SDL_MAJOR_VERSION >= 3
+	#if SDL_MAJOR_VERSION >= 3 && UseSDLscaling
 	SDL_WINDOW_RESIZABLE
 	#else
 	0 /* SDL_WINDOW_HIDDEN */
@@ -4240,7 +4238,7 @@ LOCALFUNC blnr CreateMainWindow(void)
 	;
 	blnr v = falseblnr;
 
-#if EnableMagnify && 1
+#if EnableMagnify
 	if (UseMagnify) {
 		NewWindowHeight *= MyWindowScale;
 		NewWindowWidth *= MyWindowScale;
@@ -4336,6 +4334,7 @@ LOCALFUNC blnr CreateMainWindow(void)
 	) {
 		fprintf(stderr, "SDL_SetWindowPosition fails: %s\n",
 			SDL_GetError());
+	#if UseSDLscaling
 	} else
 	if (
 		!SDL_SetRenderLogicalPresentation(
@@ -4347,6 +4346,7 @@ LOCALFUNC blnr CreateMainWindow(void)
 	) {
 		fprintf(stderr, "SDL_SetRenderLogicalPresentation fails: %s\n",
 			SDL_GetError());
+	#endif
 	#endif
 	} else
 	if (NULL == (my_texture = SDL_CreateTexture(
@@ -4414,15 +4414,29 @@ LOCALFUNC blnr CreateMainWindow(void)
 
 			#if SDL_MAJOR_VERSION >= 3
 			SDL_SetWindowFullscreen(my_main_wind, true);
-			SDL_GetWindowSizeInPixels
-			#else 
-			SDL_GL_GetDrawableSize
+			#if UseSDLscaling
+			SDL_GetWindowSizeInPixels(my_main_wind, &wr, &hr);
+			#else
+			SDL_DisplayMode *mode;
+			
+			mode = (SDL_DisplayMode *)SDL_GetCurrentDisplayMode(
+				SDL_GetDisplayForWindow(my_main_wind)
+			);
+
+			if (mode == NULL) {
+				return falseblnr;
+			}
+
+			wr = mode->w;
+			hr = mode->h;
 			#endif
-			(my_main_wind, &wr, &hr);
+			#else 
+			SDL_GL_GetDrawableSize(my_main_wind, &wr, &hr);
+			#endif
 
 			ViewHSize = wr;
 			ViewVSize = hr;
-#if EnableMagnify
+#if EnableMagnify && !UseSDLscaling
 			if (UseMagnify) {
 				ViewHSize /= MyWindowScale;
 				ViewVSize /= MyWindowScale;
